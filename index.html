@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K&amp;M Car Care — Neighborhood Chemist</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Open+Sans:wght@300;400;600&family=Courier+Prime:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ============================================================
+       DESIGN SYSTEM — CSS CUSTOM PROPERTIES
+       ============================================================ */
+    :root {
+      /* Primary Palette */
+      --color-carbon-black:   #000000;
+      --color-clinical-white: #FFFFFF;
+      --color-signal-red:     #C41230;
+
+      /* Secondary Palette */
+      --color-safety-yellow:  #FFD700;
+      --color-science-blue:   #00AEEF;
+
+      /* Surface / Tonal Shades */
+      --color-surface:          #0a0a0a;
+      --color-surface-elevated: #111111;
+      --color-surface-card:     #141414;
+      --color-border:           rgba(255, 255, 255, 0.08);
+      --color-text-muted:       rgba(255, 255, 255, 0.55);
+      --color-text-subdued:     rgba(255, 255, 255, 0.75);
+
+      /* Typography */
+      --font-headline:  'Oswald', sans-serif;
+      --font-body:      'Open Sans', sans-serif;
+      --font-technical: 'Courier Prime', monospace;
+
+      /* Spacing Scale */
+      --space-xs:  0.25rem;
+      --space-sm:  0.5rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --space-3xl: 4.5rem;
+
+      /* Layout */
+      --max-width: 1280px;
+      --nav-height: 72px;
+
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-base: 250ms ease;
+
+      /* Radii */
+      --radius-sm:   4px;
+      --radius-md:   8px;
+      --radius-lg:  16px;
+      --radius-pill: 100px;
+    }
+
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--color-surface);
+      color: var(--color-clinical-white);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; }
+    a   { text-decoration: none; color: inherit; }
+    ul  { list-style: none; }
+
+    /* ============================================================
+       BLUEPRINT GRID TEXTURE (pure CSS — hero background)
+       ============================================================ */
+    .blueprint-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 174, 239, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 174, 239, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       NAVIGATION
+       ============================================================ */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: var(--nav-height);
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .nav__inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-xl);
+    }
+
+    /* Wordmark */
+    .nav__brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      line-height: 1;
+    }
+
+    .nav__brand-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      /* Lift the emblem off the dark nav with a subtle glow */
+      box-shadow:
+        0 0 0 2px rgba(196, 18, 48, 0.5),
+        0 4px 16px rgba(0, 0, 0, 0.6);
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+    }
+
+    .nav__brand:hover .nav__brand-logo {
+      box-shadow:
+        0 0 0 2px var(--color-signal-red),
+        0 6px 20px rgba(196, 18, 48, 0.4);
+      transform: rotate(-3deg);
+    }
+
+    .nav__brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .nav__brand-name {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-clinical-white);
+    }
+
+    .nav__brand-name span {
+      color: var(--color-signal-red);
+    }
+
+    .nav__brand-tagline {
+      font-family: var(--font-technical);
+      font-size: 0.58rem;
+      font-weight: 400;
+      color: var(--color-science-blue);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    /* Nav links */
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xl);
+    }
+
+    .nav__links a {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      transition: color var(--transition-fast);
+    }
+
+    .nav__links a:hover {
+      color: var(--color-clinical-white);
+    }
+
+    /* Nav CTA */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-headline);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn--primary {
+      background: var(--color-safety-yellow);
+      color: var(--color-carbon-black);
+      padding: 0.65rem 1.4rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+    }
+
+    .btn--primary:hover {
+      background: #e6c200;
+    }
+
+    .btn--secondary {
+      background: transparent;
+      color: var(--color-clinical-white);
+      border-color: rgba(255, 255, 255, 0.35);
+      padding: 0.65rem 1.4rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+    }
+
+    .btn--secondary:hover {
+      border-color: var(--color-clinical-white);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn--lg {
+      padding: 0.9rem 2rem;
+      font-size: 0.95rem;
+      border-radius: var(--radius-pill);
+    }
+
+    /* Mobile nav toggle */
+    .nav__toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: var(--space-sm);
+      background: none;
+      border: none;
+    }
+
+    .nav__toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--color-clinical-white);
+      border-radius: 2px;
+      transition: transform var(--transition-base), opacity var(--transition-base);
+    }
+
+    #nav-check { display: none; }
+
+    /* ============================================================
+       HERO SECTION
+       ============================================================ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      padding-top: var(--nav-height);
+      background: var(--color-carbon-black);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Radial glow — subtle red bloom bottom-left */
+    .hero::before {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 60%;
+      aspect-ratio: 1;
+      background: radial-gradient(ellipse at center, rgba(196, 18, 48, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Radial glow — blue top-right */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 10%;
+      right: -10%;
+      width: 50%;
+      aspect-ratio: 1;
+      background: radial-gradient(ellipse at center, rgba(0, 174, 239, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 2;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--space-3xl) var(--space-xl);
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3xl);
+      align-items: center;
+      flex: 1;
+    }
+
+    /* ---- LEFT COLUMN: Text ---- */
+    .hero__text {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    .hero__eyebrow {
+      font-family: var(--font-technical);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-science-blue);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .hero__eyebrow::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 2px;
+      background: var(--color-science-blue);
+      flex-shrink: 0;
+    }
+
+    .hero__headline {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      line-height: 1.08;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: var(--color-clinical-white);
+    }
+
+    .hero__headline em {
+      font-style: normal;
+      color: var(--color-signal-red);
+    }
+
+    .hero__body {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      color: var(--color-text-subdued);
+      line-height: 1.75;
+      max-width: 52ch;
+    }
+
+    .hero__ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      align-items: center;
+    }
+
+    /* Process label below CTAs */
+    .hero__process-hint {
+      font-family: var(--font-technical);
+      font-size: 0.65rem;
+      color: var(--color-text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ---- RIGHT COLUMN: Data cards ---- */
+    .hero__data {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Water conservation badge — primary feature card */
+    .water-badge {
+      background: var(--color-surface-card);
+      border: 1px solid rgba(0, 174, 239, 0.25);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl) var(--space-xl);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Accent bar top */
+    .water-badge::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--color-science-blue), transparent);
+    }
+
+    .water-badge__label {
+      font-family: var(--font-technical);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--color-science-blue);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .water-badge__label::before {
+      content: '◈';
+      font-size: 0.55rem;
+    }
+
+    .water-badge__metric {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .water-badge__number {
+      font-family: var(--font-technical);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 700;
+      color: var(--color-clinical-white);
+      line-height: 1;
+    }
+
+    .water-badge__unit {
+      font-family: var(--font-technical);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-science-blue);
+      padding-bottom: 0.5rem;
+    }
+
+    .water-badge__caption {
+      font-family: var(--font-technical);
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      letter-spacing: 0.04em;
+      line-height: 1.55;
+    }
+
+    .water-badge__caption strong {
+      color: var(--color-signal-red);
+    }
+
+    /* Water icon SVG */
+    .water-badge__icon {
+      position: absolute;
+      top: var(--space-xl);
+      right: var(--space-xl);
+      opacity: 0.12;
+    }
+
+    /* Divider line inside badge */
+    .water-badge__divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: var(--space-md) 0;
+    }
+
+    .water-badge__comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    .water-badge__stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .water-badge__stat-label {
+      font-family: var(--font-technical);
+      font-size: 0.58rem;
+      color: var(--color-text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .water-badge__stat-value {
+      font-family: var(--font-technical);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .water-badge__stat-value--good { color: var(--color-science-blue); }
+    .water-badge__stat-value--warn { color: var(--color-signal-red); }
+
+    /* Secondary stat cards row */
+    .hero__stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+    }
+
+    .stat-card {
+      background: var(--color-surface-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .stat-card__value {
+      font-family: var(--font-technical);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--color-clinical-white);
+    }
+
+    .stat-card__label {
+      font-family: var(--font-technical);
+      font-size: 0.62rem;
+      color: var(--color-text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .stat-card__accent {
+      display: block;
+      width: 24px;
+      height: 2px;
+      border-radius: 2px;
+      margin-top: var(--space-xs);
+    }
+
+    /* ============================================================
+       TRUST BAR
+       ============================================================ */
+    .trust-bar {
+      position: relative;
+      z-index: 2;
+      background: var(--color-surface-elevated);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .trust-bar__inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--space-lg) var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .trust-item__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .trust-item__text {
+      font-family: var(--font-technical);
+      font-size: 0.65rem;
+      color: var(--color-text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .trust-item__text strong {
+      color: var(--color-clinical-white);
+    }
+
+    /* ============================================================
+       MOBILE RESPONSIVENESS
+       ============================================================ */
+
+    /* Tablet */
+    @media (max-width: 1024px) {
+      .hero__content {
+        grid-template-columns: 1fr;
+        padding: var(--space-2xl) var(--space-xl);
+        gap: var(--space-2xl);
+      }
+
+      .hero__data {
+        max-width: 600px;
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .nav__links,
+      .nav__cta { display: none; }
+
+      .nav__toggle { display: flex; }
+
+      /* Mobile nav drawer */
+      #nav-check:checked ~ .nav__inner .nav__links {
+        display: flex;
+      }
+
+      .hero__content {
+        padding: var(--space-xl) var(--space-md);
+        gap: var(--space-xl);
+      }
+
+      .hero__headline {
+        font-size: clamp(2rem, 8vw, 2.8rem);
+      }
+
+      .hero__stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .water-badge__number {
+        font-size: clamp(2.5rem, 10vw, 4rem);
+      }
+
+      .trust-bar__inner {
+        justify-content: center;
+        gap: var(--space-md);
+      }
+
+      .trust-item {
+        flex: 1 1 calc(50% - var(--space-md));
+        min-width: 140px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .hero__ctas {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .hero__ctas .btn {
+        text-align: center;
+        justify-content: center;
+      }
+
+      .hero__stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+       ============================================================ -->
+  <input type="checkbox" id="nav-check" aria-hidden="true" />
+  <nav class="nav" aria-label="Primary navigation">
+    <div class="nav__inner">
+
+      <!-- Logo + Wordmark -->
+      <a href="/" class="nav__brand" aria-label="K&amp;M Car Care Home">
+        <img
+          src="logo.png"
+          alt="K&amp;M Car Care logo — circular tire badge"
+          class="nav__brand-logo"
+          width="50"
+          height="50"
+        />
+        <div class="nav__brand-text">
+          <span class="nav__brand-name">K<span>&amp;</span>M Car Care</span>
+          <span class="nav__brand-tagline">// Neighborhood Chemist</span>
+        </div>
+      </a>
+
+      <!-- Desktop links -->
+      <ul class="nav__links" role="list">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#process">Our Process</a></li>
+        <li><a href="#conservation">Conservation</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+
+      <!-- Nav CTA -->
+      <a href="#contact" class="btn btn--primary nav__cta" aria-label="Schedule a service">
+        Schedule Service
+      </a>
+
+      <!-- Mobile toggle -->
+      <label class="nav__toggle" for="nav-check" aria-label="Open navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO SECTION
+       ============================================================ -->
+  <section class="hero" id="hero" aria-labelledby="hero-headline">
+
+    <!-- Blueprint grid texture -->
+    <div class="blueprint-bg" aria-hidden="true"></div>
+
+    <div class="hero__content">
+
+      <!-- ---- Left: Text content ---- -->
+      <div class="hero__text">
+
+        <p class="hero__eyebrow" aria-label="Section label">
+          Mobile Asset Preservation — Service Active
+        </p>
+
+        <h1 class="hero__headline" id="hero-headline">
+          Your First Line of&nbsp;Defense Against
+          <em>Environmental&nbsp;Decay</em>
+          &amp; Asset&nbsp;Depreciation
+        </h1>
+
+        <p class="hero__body">
+          K&amp;M Car Care deploys precision decontamination protocols directly
+          to your location. We neutralize surface contaminants, perform
+          paint-depth remediation, and apply long-chain polymer shields to halt
+          oxidation at the molecular level — preserving your asset's value,
+          appearance, and integrity without a single drop wasted.
+        </p>
+
+        <div class="hero__ctas">
+          <a href="#contact" class="btn btn--primary btn--lg">
+            Begin Decontamination
+          </a>
+          <a href="#process" class="btn btn--secondary btn--lg">
+            View Our Process
+          </a>
+        </div>
+
+        <p class="hero__process-hint">
+          // Serving your neighborhood · No facility required
+        </p>
+
+      </div>
+
+      <!-- ---- Right: Data + Science Callouts ---- -->
+      <div class="hero__data" aria-label="Key metrics and certifications">
+
+        <!-- PRIMARY: 3-Gallon Water Badge -->
+        <div class="water-badge" role="region" aria-label="Water conservation metric">
+
+          <!-- Water drop icon -->
+          <svg class="water-badge__icon" width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+            <path d="M40 8 C40 8 14 36 14 52 C14 66.4 25.6 78 40 78 C54.4 78 66 66.4 66 52 C66 36 40 8 40 8Z" fill="#00AEEF"/>
+          </svg>
+
+          <p class="water-badge__label">// H₂O Conservation Protocol</p>
+
+          <div class="water-badge__metric" aria-label="3 gallons per session">
+            <span class="water-badge__number">3</span>
+            <span class="water-badge__unit">GAL</span>
+          </div>
+
+          <p class="water-badge__caption">
+            Maximum water utilization per full decontamination session.<br/>
+            <strong>Industry standard: 40–120 gallons.</strong>
+          </p>
+
+          <div class="water-badge__divider" aria-hidden="true"></div>
+
+          <div class="water-badge__comparison" aria-label="Water usage comparison">
+            <div class="water-badge__stat">
+              <span class="water-badge__stat-label">K&amp;M Protocol</span>
+              <span class="water-badge__stat-value water-badge__stat-value--good">3 GAL</span>
+            </div>
+            <div class="water-badge__stat">
+              <span class="water-badge__stat-label">Industry Avg.</span>
+              <span class="water-badge__stat-value water-badge__stat-value--warn">80 GAL</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Secondary stat cards -->
+        <div class="hero__stats">
+
+          <div class="stat-card">
+            <span class="stat-card__value">pH 7</span>
+            <span class="stat-card__label">Balanced Formulas</span>
+            <span class="stat-card__accent" style="background: var(--color-science-blue);" aria-hidden="true"></span>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-card__value">SiO₂</span>
+            <span class="stat-card__label">Ceramic Polymer Shield</span>
+            <span class="stat-card__accent" style="background: var(--color-safety-yellow);" aria-hidden="true"></span>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-card__value">0 mi</span>
+            <span class="stat-card__label">You Travel Required</span>
+            <span class="stat-card__accent" style="background: var(--color-signal-red);" aria-hidden="true"></span>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-card__value">100%</span>
+            <span class="stat-card__label">Biodegradable Agents</span>
+            <span class="stat-card__accent" style="background: var(--color-science-blue);" aria-hidden="true"></span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div><!-- /hero__content -->
+
+  </section>
+
+  <!-- ============================================================
+       TRUST / DATA BAR
+       ============================================================ -->
+  <div class="trust-bar" role="complementary" aria-label="Service credentials">
+    <div class="trust-bar__inner">
+
+      <div class="trust-item">
+        <span class="trust-item__dot" style="background: var(--color-science-blue);" aria-hidden="true"></span>
+        <p class="trust-item__text">
+          <strong>~2 HRS</strong> avg. remediation window
+        </p>
+      </div>
+
+      <div class="trust-item">
+        <span class="trust-item__dot" style="background: var(--color-safety-yellow);" aria-hidden="true"></span>
+        <p class="trust-item__text">
+          <strong>500+</strong> assets preserved
+        </p>
+      </div>
+
+      <div class="trust-item">
+        <span class="trust-item__dot" style="background: var(--color-signal-red);" aria-hidden="true"></span>
+        <p class="trust-item__text">
+          <strong>97%</strong> client retention rate
+        </p>
+      </div>
+
+      <div class="trust-item">
+        <span class="trust-item__dot" style="background: var(--color-science-blue);" aria-hidden="true"></span>
+        <p class="trust-item__text">
+          <strong>∞</strong> eco-conscious protocols
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
