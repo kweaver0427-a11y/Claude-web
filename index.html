@@ -146,7 +146,6 @@
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
-      /* Lift the emblem off the dark nav with a subtle glow */
       box-shadow:
         0 0 0 2px rgba(196, 18, 48, 0.5),
         0 4px 16px rgba(0, 0, 0, 0.6);
@@ -296,7 +295,6 @@
       overflow: hidden;
     }
 
-    /* Radial glow — subtle red bloom bottom-left */
     .hero::before {
       content: '';
       position: absolute;
@@ -308,7 +306,6 @@
       pointer-events: none;
     }
 
-    /* Radial glow — blue top-right */
     .hero::after {
       content: '';
       position: absolute;
@@ -334,7 +331,6 @@
       flex: 1;
     }
 
-    /* ---- LEFT COLUMN: Text ---- */
     .hero__text {
       display: flex;
       flex-direction: column;
@@ -393,7 +389,6 @@
       align-items: center;
     }
 
-    /* Process label below CTAs */
     .hero__process-hint {
       font-family: var(--font-technical);
       font-size: 0.65rem;
@@ -402,14 +397,12 @@
       text-transform: uppercase;
     }
 
-    /* ---- RIGHT COLUMN: Data cards ---- */
     .hero__data {
       display: flex;
       flex-direction: column;
       gap: var(--space-lg);
     }
 
-    /* Water conservation badge — primary feature card */
     .water-badge {
       background: var(--color-surface-card);
       border: 1px solid rgba(0, 174, 239, 0.25);
@@ -419,7 +412,6 @@
       overflow: hidden;
     }
 
-    /* Accent bar top */
     .water-badge::before {
       content: '';
       position: absolute;
@@ -444,7 +436,7 @@
     }
 
     .water-badge__label::before {
-      content: '◈';
+      content: '\25C8';
       font-size: 0.55rem;
     }
 
@@ -483,7 +475,6 @@
       color: var(--color-signal-red);
     }
 
-    /* Water icon SVG */
     .water-badge__icon {
       position: absolute;
       top: var(--space-xl);
@@ -491,7 +482,6 @@
       opacity: 0.12;
     }
 
-    /* Divider line inside badge */
     .water-badge__divider {
       height: 1px;
       background: var(--color-border);
@@ -527,7 +517,6 @@
     .water-badge__stat-value--good { color: var(--color-science-blue); }
     .water-badge__stat-value--warn { color: var(--color-signal-red); }
 
-    /* Secondary stat cards row */
     .hero__stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -567,9 +556,6 @@
       margin-top: var(--space-xs);
     }
 
-    /* ============================================================
-       TRUST BAR
-       ============================================================ */
     .trust-bar {
       position: relative;
       z-index: 2;
@@ -613,106 +599,49 @@
       color: var(--color-clinical-white);
     }
 
-    /* ============================================================
-       MOBILE RESPONSIVENESS
-       ============================================================ */
-
-    /* Tablet */
     @media (max-width: 1024px) {
       .hero__content {
         grid-template-columns: 1fr;
         padding: var(--space-2xl) var(--space-xl);
         gap: var(--space-2xl);
       }
-
-      .hero__data {
-        max-width: 600px;
-      }
+      .hero__data { max-width: 600px; }
     }
 
-    /* Mobile */
     @media (max-width: 768px) {
-      .nav__links,
-      .nav__cta { display: none; }
-
+      .nav__links, .nav__cta { display: none; }
       .nav__toggle { display: flex; }
-
-      /* Mobile nav drawer */
-      #nav-check:checked ~ .nav__inner .nav__links {
-        display: flex;
-      }
-
-      .hero__content {
-        padding: var(--space-xl) var(--space-md);
-        gap: var(--space-xl);
-      }
-
-      .hero__headline {
-        font-size: clamp(2rem, 8vw, 2.8rem);
-      }
-
-      .hero__stats {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .water-badge__number {
-        font-size: clamp(2.5rem, 10vw, 4rem);
-      }
-
-      .trust-bar__inner {
-        justify-content: center;
-        gap: var(--space-md);
-      }
-
-      .trust-item {
-        flex: 1 1 calc(50% - var(--space-md));
-        min-width: 140px;
-      }
+      #nav-check:checked ~ .nav__inner .nav__links { display: flex; }
+      .hero__content { padding: var(--space-xl) var(--space-md); gap: var(--space-xl); }
+      .hero__headline { font-size: clamp(2rem, 8vw, 2.8rem); }
+      .hero__stats { grid-template-columns: 1fr 1fr; }
+      .water-badge__number { font-size: clamp(2.5rem, 10vw, 4rem); }
+      .trust-bar__inner { justify-content: center; gap: var(--space-md); }
+      .trust-item { flex: 1 1 calc(50% - var(--space-md)); min-width: 140px; }
     }
 
     @media (max-width: 420px) {
-      .hero__ctas {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .hero__ctas .btn {
-        text-align: center;
-        justify-content: center;
-      }
-
-      .hero__stats {
-        grid-template-columns: 1fr;
-      }
+      .hero__ctas { flex-direction: column; align-items: stretch; }
+      .hero__ctas .btn { text-align: center; justify-content: center; }
+      .hero__stats { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- ============================================================
-       NAVIGATION
-       ============================================================ -->
   <input type="checkbox" id="nav-check" aria-hidden="true" />
   <nav class="nav" aria-label="Primary navigation">
     <div class="nav__inner">
 
-      <!-- Logo + Wordmark -->
       <a href="/" class="nav__brand" aria-label="K&amp;M Car Care Home">
-        <img
-          src="logo.png"
-          alt="K&amp;M Car Care logo — circular tire badge"
-          class="nav__brand-logo"
-          width="50"
-          height="50"
-        />
+        <img src="logo.png" alt="K&amp;M Car Care logo" class="nav__brand-logo" width="50" height="50" />
         <div class="nav__brand-text">
           <span class="nav__brand-name">K<span>&amp;</span>M Car Care</span>
           <span class="nav__brand-tagline">// Neighborhood Chemist</span>
         </div>
       </a>
 
-      <!-- Desktop links -->
       <ul class="nav__links" role="list">
         <li><a href="#services">Services</a></li>
         <li><a href="#process">Our Process</a></li>
@@ -720,44 +649,26 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
 
-      <!-- Nav CTA -->
-      <a href="#contact" class="btn btn--primary nav__cta" aria-label="Schedule a service">
-        Schedule Service
-      </a>
+      <a href="#contact" class="btn btn--primary nav__cta">Schedule Service</a>
 
-      <!-- Mobile toggle -->
       <label class="nav__toggle" for="nav-check" aria-label="Open navigation menu">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </label>
 
     </div>
   </nav>
 
-  <!-- ============================================================
-       HERO SECTION
-       ============================================================ -->
   <section class="hero" id="hero" aria-labelledby="hero-headline">
-
-    <!-- Blueprint grid texture -->
     <div class="blueprint-bg" aria-hidden="true"></div>
-
     <div class="hero__content">
 
-      <!-- ---- Left: Text content ---- -->
       <div class="hero__text">
-
-        <p class="hero__eyebrow" aria-label="Section label">
-          Mobile Asset Preservation — Service Active
-        </p>
-
+        <p class="hero__eyebrow">Mobile Asset Preservation — Service Active</p>
         <h1 class="hero__headline" id="hero-headline">
           Your First Line of&nbsp;Defense Against
           <em>Environmental&nbsp;Decay</em>
           &amp; Asset&nbsp;Depreciation
         </h1>
-
         <p class="hero__body">
           K&amp;M Car Care deploys precision decontamination protocols directly
           to your location. We neutralize surface contaminants, perform
@@ -765,48 +676,29 @@
           oxidation at the molecular level — preserving your asset's value,
           appearance, and integrity without a single drop wasted.
         </p>
-
         <div class="hero__ctas">
-          <a href="#contact" class="btn btn--primary btn--lg">
-            Begin Decontamination
-          </a>
-          <a href="#process" class="btn btn--secondary btn--lg">
-            View Our Process
-          </a>
+          <a href="#contact" class="btn btn--primary btn--lg">Begin Decontamination</a>
+          <a href="#process" class="btn btn--secondary btn--lg">View Our Process</a>
         </div>
-
-        <p class="hero__process-hint">
-          // Serving your neighborhood · No facility required
-        </p>
-
+        <p class="hero__process-hint">// Serving your neighborhood · No facility required</p>
       </div>
 
-      <!-- ---- Right: Data + Science Callouts ---- -->
-      <div class="hero__data" aria-label="Key metrics and certifications">
-
-        <!-- PRIMARY: 3-Gallon Water Badge -->
+      <div class="hero__data">
         <div class="water-badge" role="region" aria-label="Water conservation metric">
-
-          <!-- Water drop icon -->
           <svg class="water-badge__icon" width="80" height="80" viewBox="0 0 80 80" fill="none" aria-hidden="true">
             <path d="M40 8 C40 8 14 36 14 52 C14 66.4 25.6 78 40 78 C54.4 78 66 66.4 66 52 C66 36 40 8 40 8Z" fill="#00AEEF"/>
           </svg>
-
-          <p class="water-badge__label">// H₂O Conservation Protocol</p>
-
-          <div class="water-badge__metric" aria-label="3 gallons per session">
+          <p class="water-badge__label">// H&#8322;O Conservation Protocol</p>
+          <div class="water-badge__metric">
             <span class="water-badge__number">3</span>
             <span class="water-badge__unit">GAL</span>
           </div>
-
           <p class="water-badge__caption">
             Maximum water utilization per full decontamination session.<br/>
             <strong>Industry standard: 40–120 gallons.</strong>
           </p>
-
-          <div class="water-badge__divider" aria-hidden="true"></div>
-
-          <div class="water-badge__comparison" aria-label="Water usage comparison">
+          <div class="water-badge__divider"></div>
+          <div class="water-badge__comparison">
             <div class="water-badge__stat">
               <span class="water-badge__stat-label">K&amp;M Protocol</span>
               <span class="water-badge__stat-value water-badge__stat-value--good">3 GAL</span>
@@ -816,78 +708,53 @@
               <span class="water-badge__stat-value water-badge__stat-value--warn">80 GAL</span>
             </div>
           </div>
-
         </div>
 
-        <!-- Secondary stat cards -->
         <div class="hero__stats">
-
           <div class="stat-card">
             <span class="stat-card__value">pH 7</span>
             <span class="stat-card__label">Balanced Formulas</span>
-            <span class="stat-card__accent" style="background: var(--color-science-blue);" aria-hidden="true"></span>
+            <span class="stat-card__accent" style="background: var(--color-science-blue);"></span>
           </div>
-
           <div class="stat-card">
-            <span class="stat-card__value">SiO₂</span>
+            <span class="stat-card__value">SiO&#8322;</span>
             <span class="stat-card__label">Ceramic Polymer Shield</span>
-            <span class="stat-card__accent" style="background: var(--color-safety-yellow);" aria-hidden="true"></span>
+            <span class="stat-card__accent" style="background: var(--color-safety-yellow);"></span>
           </div>
-
           <div class="stat-card">
             <span class="stat-card__value">0 mi</span>
             <span class="stat-card__label">You Travel Required</span>
-            <span class="stat-card__accent" style="background: var(--color-signal-red);" aria-hidden="true"></span>
+            <span class="stat-card__accent" style="background: var(--color-signal-red);"></span>
           </div>
-
           <div class="stat-card">
             <span class="stat-card__value">100%</span>
             <span class="stat-card__label">Biodegradable Agents</span>
-            <span class="stat-card__accent" style="background: var(--color-science-blue);" aria-hidden="true"></span>
+            <span class="stat-card__accent" style="background: var(--color-science-blue);"></span>
           </div>
-
         </div>
-
       </div>
 
-    </div><!-- /hero__content -->
-
+    </div>
   </section>
 
-  <!-- ============================================================
-       TRUST / DATA BAR
-       ============================================================ -->
-  <div class="trust-bar" role="complementary" aria-label="Service credentials">
+  <div class="trust-bar">
     <div class="trust-bar__inner">
-
       <div class="trust-item">
-        <span class="trust-item__dot" style="background: var(--color-science-blue);" aria-hidden="true"></span>
-        <p class="trust-item__text">
-          <strong>~2 HRS</strong> avg. remediation window
-        </p>
+        <span class="trust-item__dot" style="background: var(--color-science-blue);"></span>
+        <p class="trust-item__text"><strong>~2 HRS</strong> avg. remediation window</p>
       </div>
-
       <div class="trust-item">
-        <span class="trust-item__dot" style="background: var(--color-safety-yellow);" aria-hidden="true"></span>
-        <p class="trust-item__text">
-          <strong>500+</strong> assets preserved
-        </p>
+        <span class="trust-item__dot" style="background: var(--color-safety-yellow);"></span>
+        <p class="trust-item__text"><strong>500+</strong> assets preserved</p>
       </div>
-
       <div class="trust-item">
-        <span class="trust-item__dot" style="background: var(--color-signal-red);" aria-hidden="true"></span>
-        <p class="trust-item__text">
-          <strong>97%</strong> client retention rate
-        </p>
+        <span class="trust-item__dot" style="background: var(--color-signal-red);"></span>
+        <p class="trust-item__text"><strong>97%</strong> client retention rate</p>
       </div>
-
       <div class="trust-item">
-        <span class="trust-item__dot" style="background: var(--color-science-blue);" aria-hidden="true"></span>
-        <p class="trust-item__text">
-          <strong>∞</strong> eco-conscious protocols
-        </p>
+        <span class="trust-item__dot" style="background: var(--color-science-blue);"></span>
+        <p class="trust-item__text"><strong>&#8734;</strong> eco-conscious protocols</p>
       </div>
-
     </div>
   </div>
 
