@@ -1,0 +1,13 @@
+{
+  "_comment": "Small geometry used by tests/test_geometry.py for fast CPU verification.",
+  "hidden_dim": 64,
+  "latent_dim": 32,
+  "ssm_expand": 2,
+  "ssm_heads": 4,
+  "ssm_state_dim": 16,
+  "ssm_conv_kernel": 4,
+  "minions_per_overlord": 4,
+  "minion_top_k": 2,
+  "minion_ffn_dim": 48,
+  "norm_eps": 1e-6
+}

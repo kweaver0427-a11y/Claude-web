@@ -1,0 +1,13 @@
+{
+  "_comment": "Base geometry for one FeudalPyramidBlock. 2 * minions_per_overlord = 128 experts, mirroring Llama-4-Maverick-17B-128E for 1:1 weight surgery.",
+  "hidden_dim": 5120,
+  "latent_dim": 1280,
+  "ssm_expand": 2,
+  "ssm_heads": 40,
+  "ssm_state_dim": 128,
+  "ssm_conv_kernel": 4,
+  "minions_per_overlord": 64,
+  "minion_top_k": 2,
+  "minion_ffn_dim": 2048,
+  "norm_eps": 1e-6
+}

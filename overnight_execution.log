@@ -1,0 +1,104 @@
+================================================================================
+FEUDAL MAMBA-MOE BEHEMOTH — PHASE 1 OVERNIGHT EXECUTION LOG
+Date: 2026-07-19 | Branch: claude/feudal-mamba-moe-build-e7hupj
+================================================================================
+
+[MILESTONE 1] WORKSPACE ASSESSMENT & SKELETON MAPPING — COMPLETE
+--------------------------------------------------------------------------------
+- Workspace was empty except an unrelated index.html; no conflicts.
+- Created models/, utils/, tests/, configs/ package layout with pytest.ini
+  (pythonpath=.) so tests import the packages from the repo root.
+- Wrote architecture_spec.md: full symbol table, block-level tensor geometry
+  map, per-layer shape derivations, and the five mathematical constraints
+  (divisibility, top-k bound, dimension preservation, strict causality,
+  state-space isolation) that the test suite enforces.
+- Environment: torch was absent. First install attempt against the PyTorch CPU
+  wheel index failed through the outbound proxy ("from versions: none");
+  fell back to PyPI (torch 2.13.0) which succeeded. pytest 9.1.1,
+  safetensors, numpy installed cleanly.
+
+[MILESTONE 2] PYRAMID BLOCK (models/feudal_block.py) — COMPLETE
+--------------------------------------------------------------------------------
+- SharedLatentProjection: RMSNorm(D) + Linear(D->L, no bias). One shared
+  compressed coordinate system feeding BOTH overlords.
+- Mamba2StateSpaceLayer (x2, alpha/beta, zero shared parameters): fused
+  in_proj -> (z, x, B, C, dt); causal depthwise Conv1d over concat(x,B,C)
+  with K-1 left padding; scalar-per-head A = -exp(A_log) (SSD form);
+  dt = softplus(dt + dt_bias) with log-uniform init over [1e-3, 1e-1];
+  pure-PyTorch sequential scan h_t = exp(dt*A) h_{t-1} + dt*(x_t (x) B_t),
+  y_t = <h_t, C_t> + D_skip*x_t; gated RMSNorm output; out_proj(Di->L);
+  residual. Recurrence is contractive by construction (A<0, dt>0).
+- MinionExpert: SwiGLU FFN with gate_proj/up_proj/down_proj naming chosen to
+  mirror Llama FFN modules so weight surgery is a pure tensor copy.
+- MinionDispatchGate: float32 router softmax, top-k with renormalized combine
+  weights, per-expert dispatch via index_add (clean autograd path — chosen
+  over read-modify-write fancy indexing), Switch-style load-balance loss
+  M * sum(f_e * pbar_e) surfaced in the aux dict.
+- ConvergenceLayer: per-path RMSNorm + learned per-channel gates, concat to
+  [B,S,2L], Cross-Level Structural Fusion Matrix W_fuse [2L->D] with
+  1/sqrt(2L) init; block adds residual so it is near-identity at init.
+- Every layer carries explicit shape comments ([B,S,D] -> [B,S,L] style).
+- Config sanity (head divisibility, top-k bound, kernel >= 1) enforced in
+  FeudalConfig.__post_init__ and covered by tests.
+
+[MILESTONE 3] MAVERICK EXTENSION HOOKS (utils/weight_surgery.py) — COMPLETE
+--------------------------------------------------------------------------------
+- CheckpointReader: uniform lazy tensor access over a single .safetensors
+  file OR a sharded dir (via *.index.json weight_map, or shard enumeration
+  when no index exists). Tensors read individually — the donor checkpoint
+  never has to fit in memory.
+- Dual layout auto-detection: fused HF Llama-4 (experts.gate_up_proj
+  [n_exp, hidden, 2*ffn] + experts.down_proj) and per-expert
+  (experts.{e}.gate_proj.weight etc.). Fused tensors are split and
+  transposed to nn.Linear [out, in] convention.
+- slice_to_geometry: leading-index truncation only; raises if the target dim
+  exceeds the source dim (surgery never fabricates parameters).
+- Round-robin cluster assignment: even source expert -> alpha slot e//2,
+  odd -> beta slot e//2; 128 source experts fill 2x64 minion slots exactly.
+- build_minion_fragment emits keys shaped like
+  minions_alpha.experts.{m}.gate_proj.weight — loads straight into the block
+  with load_state_dict(strict=False). CLI entry point included
+  (python -m utils.weight_surgery CKPT --layer N --out fragment.pt).
+
+[MILESTONE 4] AUTOMATED VERIFICATION SUITE (tests/test_geometry.py) — COMPLETE
+--------------------------------------------------------------------------------
+Run: python -m pytest tests/test_geometry.py -v
+Result: 14 passed, 0 failed, 0 errors in 2.06s  (0% error rate, first run)
+
+Coverage:
+  1. Forward shape preservation at (B,S) = (1,1), (2,16), (3,32); finiteness.
+  2. Per-sublayer geometry incl. W_fuse exactly [D, 2L].
+  3. Config validation raises on bad head divisibility / top-k.
+  4. Backward pass: every non-expert parameter receives a finite gradient
+     (idle experts exempt — zero routed tokens is legitimate); A_log,
+     dt_bias, D_skip verified nonzero in BOTH overlords (scan gradient
+     flow unbroken).
+  5. State-space isolation: alpha-only loss produces exactly zero gradient
+     on every beta parameter.
+  6. Strict causality: perturbing x[:, t:] leaves out[:, :t] bit-identical
+     (atol=0); suffix provably changes.
+  7. Contractivity: exp(dt*A) in (0,1) for all heads.
+  8. Router: probs sum to 1; load-balance loss finite and >= 1 (Switch lower
+     bound); expert token fractions sum to k.
+  9. Batch independence (no cross-row leakage).
+ 10. Weight surgery round trip on a synthetic per-expert checkpoint:
+     fragment loads with zero unexpected keys, sliced values bit-equal to
+     source regions, surgically-loaded block still passes forward contract.
+ 11. Weight surgery on the fused gate_up_proj layout: split + transpose +
+     slice verified against hand-computed expectation.
+
+MODIFICATIONS / TROUBLESHOOTING DURING VERIFICATION
+--------------------------------------------------------------------------------
+- One pre-emptive rewrite before first test run: expert combine switched from
+  out[rows] = out[rows] + ... to out.index_add(0, rows, ...) to keep the
+  autograd graph clean across overlapping top-k row sets.
+- One environment failure handled autonomously: initial pytest run could not
+  import torch (the CPU-index install had silently failed behind the proxy);
+  diagnosed via the pip task log, reinstalled from PyPI, re-ran — green.
+- Zero test failures required code changes. Suite passed 14/14 on its first
+  executable run.
+
+STATUS: Phase 1 structural primitives COMPLETE and VERIFIED.
+Next phase hooks in place: real Maverick checkpoint surgery (utils), block
+stacking + global shared geometric stratum layer (models), training loop.
+================================================================================
