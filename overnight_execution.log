@@ -102,3 +102,58 @@ STATUS: Phase 1 structural primitives COMPLETE and VERIFIED.
 Next phase hooks in place: real Maverick checkpoint surgery (utils), block
 stacking + global shared geometric stratum layer (models), training loop.
 ================================================================================
+
+================================================================================
+[MILESTONE 5] FULL MODEL ASSEMBLY + GLOBAL SHARED GEOMETRIC STRATUM — COMPLETE
+--------------------------------------------------------------------------------
+- models/feudal_model.py:
+  * FeudalModelConfig wraps the per-block FeudalConfig and adds vocab_size,
+    num_blocks, stratum_rank; from_json loads nested block geometry.
+  * GlobalGeometricStratum: the single learned convergence point ABOVE every
+    pyramid. RMSNorm -> (optional low-rank D->r->D) shared basis projection ->
+    per-channel gate, added residually. from_stratum weight and stratum_gate
+    both init to 0, so the layer is an EXACT identity at init (proven by test,
+    atol=0) and only learns to bend the global basis as training proceeds.
+  * FeudalBehemoth: embedding -> N FeudalPyramidBlocks (residual stream) ->
+    global stratum -> final RMSNorm -> tied lm_head. Sums each block's Switch
+    load-balance loss into out["load_balance_loss"]; optional per-block aux.
+  * load_minion_fragment(fragment, block_index): re-prefixes a weight-surgery
+    fragment to blocks.{i}.* and loads it into a chosen block (strict=False).
+- configs/feudal_model_test_small.json: 3-block, vocab-256, rank-16 test geometry.
+- models/__init__.py re-exports the new model symbols.
+
+[MILESTONE 6] MODEL VERIFICATION SUITE (tests/test_model.py) — COMPLETE
+--------------------------------------------------------------------------------
+Run: python -m pytest   (whole repo)
+Result: 27 passed, 0 failed, 0 errors in 2.30s  (0% error rate, first run)
+  - test_geometry.py: 14 (block-level, unchanged)
+  - test_model.py:    13 (new)
+
+New coverage:
+  * End-to-end logits shape at (B,S) = (1,1), (2,12), (3,20); finiteness.
+  * Load-balance loss aggregates exactly over blocks and respects the
+    num_blocks lower bound.
+  * Weight tying (lm_head.weight IS embedding.weight).
+  * Full-stack backward: every non-expert parameter (incl. global stratum
+    projection + gate) receives finite gradient; every block's alpha SSM gets
+    gradient.
+  * Global stratum identity-at-init (low-rank AND full-rank variants), and
+    low-rank bottleneck shapes [D->r], [r->D].
+  * Stacked causality: perturbing tokens[:, t:] leaves logits[:, :t]
+    bit-identical (atol=0) through the whole N-block recurrence.
+  * Surgery fragment loads into a specific block (block 1, not block 0);
+    out-of-range block index raises; model still forwards finite logits.
+
+SCALE CHECK (informational, run on CPU):
+  * Base per-block FeudalConfig, 2 blocks, vocab 1000 -> 2.10B params
+    (~1.05B/block). Forward produced finite logits [1, 8, 1000],
+    load-balance loss 9.12. Full 8-block base model projects to ~8.4B params
+    plus embedding/head — consistent with the institutional-grade target.
+
+STATUS: Phase 1 primitives + Phase 2 full-model assembly COMPLETE and VERIFIED.
+The model now spans the whole hierarchy: shared latent stratum (below) ->
+isolated alpha/beta Mamba-2 overlords -> Llama-4-mapped minion clusters ->
+per-block convergence -> global shared geometric stratum (above) -> LM head.
+Remaining for later phases: real Maverick checkpoint surgery at scale, a
+training loop with the aux-loss schedule, and kernel-fused SSM for throughput.
+================================================================================

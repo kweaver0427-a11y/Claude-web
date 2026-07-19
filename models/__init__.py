@@ -10,6 +10,12 @@ from models.feudal_block import (
     RMSNorm,
     SharedLatentProjection,
 )
+from models.feudal_model import (
+    FeudalBehemoth,
+    FeudalModelConfig,
+    GlobalGeometricStratum,
+    build_model,
+)
 
 __all__ = [
     "ConvergenceLayer",
@@ -20,4 +26,8 @@ __all__ = [
     "MinionExpert",
     "RMSNorm",
     "SharedLatentProjection",
+    "FeudalBehemoth",
+    "FeudalModelConfig",
+    "GlobalGeometricStratum",
+    "build_model",
 ]
